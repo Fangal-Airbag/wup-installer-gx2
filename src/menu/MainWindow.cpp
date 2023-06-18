@@ -44,6 +44,8 @@ MainWindow::MainWindow(int w, int h)
 		pointerImg[i]->setScale(1.5f);
 		pointerValid[i] = false;
 	}
+
+	errorViewer = new ErrorViewer();
 	
 	SetupMainView();
 }
@@ -72,6 +74,8 @@ MainWindow::~MainWindow()
 	
 	if(folderList != NULL)
 		delete folderList;
+
+	delete errorViewer;
 }
 
 void MainWindow::updateEffects()
@@ -133,6 +137,8 @@ void MainWindow::update(GuiController *controller)
 		pointerImg[wpadIdx]->setAngle(controller->data.pointerAngle);
 		pointerValid[wpadIdx] = true;
 	}
+
+	errorViewer->calc();
 }
 
 void MainWindow::drawDrc(CVideo *video)
@@ -151,6 +157,8 @@ void MainWindow::drawDrc(CVideo *video)
 			pointerImg[i]->setAlpha(1.0f);
 		}
 	}
+	
+	errorViewer->drawDRC();
 }
 
 void MainWindow::drawTv(CVideo *video)
@@ -168,6 +176,8 @@ void MainWindow::drawTv(CVideo *video)
 			pointerValid[i] = false;
 		}
 	}
+
+	errorViewer->drawTV();
 }
 
 void MainWindow::SetupMainView()

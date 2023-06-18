@@ -16,6 +16,8 @@
  ****************************************************************************/
 #include <coreinit/foreground.h>
 #include <proc_ui/procui.h>
+#include <coreinit/memdefaultheap.h>
+#include <nn/erreula.h>
 #include "Application.h"
 #include "gui/FreeTypeGX.h"
 #include "gui/GuiImageAsync.h"
@@ -31,6 +33,14 @@
 Application *Application::applicationInstance = NULL;
 bool Application::exitApplication = false;
 bool Application::quitRequest = false;
+
+u32 Application::hbmDeniedCallback(void *context)
+{
+	nn::erreula::HomeNixSignArg homeNixSignArg;
+	nn::erreula::AppearHomeNixSign(homeNixSignArg);
+	
+	return 0;
+}
 
 Application::Application()
 	: CThread(CThread::eAttributeAffCore0 | CThread::eAttributePinnedAff, 0, 0x20000)
@@ -57,6 +67,7 @@ Application::Application()
 	exitApplication = false;
 
     ProcUIInit(OSSavesDone_ReadyToRelease);
+	ProcUIRegisterCallback(PROCUI_CALLBACK_HOME_BUTTON_DENIED, hbmDeniedCallback, NULL, 1);
 }
 
 Application::~Application()
@@ -73,7 +84,6 @@ Application::~Application()
 	SoundHandler::DestroyInstance();
 	
 	CursorDrawer::destroyInstance();
-	
 	ProcUIShutdown();
 }
 

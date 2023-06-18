@@ -23,6 +23,7 @@
 #include "fs/CFolderList.hpp"
 #include "BrowserWindow.h"
 #include "InstallWindow.h"
+#include "ErrorViewer.h"
 #include "gui/GuiParticleImage.h"
 #include "system/CMutex.h"
 
@@ -164,6 +165,7 @@ private:
 	CFolderList * folderList;
     BrowserWindow * browserWindow;
 	InstallWindow * installWindow;
+    ErrorViewer * errorViewer;
 
     CMutex guiMutex;
 };

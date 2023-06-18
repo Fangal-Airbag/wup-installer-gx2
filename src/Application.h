@@ -66,6 +66,8 @@ public:
 private:
 	Application();
 	virtual ~Application();
+
+	static u32 hbmDeniedCallback(void *context);
 	
     bool procUI(void);
 

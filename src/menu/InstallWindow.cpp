@@ -107,7 +107,7 @@ void InstallWindow::OnDestinationChoice(GuiElement * element, int choice)
 void InstallWindow::executeThread()
 {
 	Application::instance()->exitDisable();
-	OSEnableHomeButtonMenu(false);
+	OSEnableHomeButtonMenu(FALSE);
 	
 	canceled = false;
 	
@@ -149,7 +149,7 @@ void InstallWindow::executeThread()
 	if(APD_enabled)
 		enableAutoPowerDown();
 	
-	OSEnableHomeButtonMenu(true);
+	OSEnableHomeButtonMenu(TRUE);
 	Application::instance()->exitEnable();
 }
 
