@@ -338,12 +338,12 @@ void InstallWindow::InstallProcess(int pos, int total)
 	{
 		if(pos == total)
 		{
-			messageBox->reload("Succesfully installed", gameName, "", MessageBox::BT_OK, MessageBox::IT_ICONTRUE);
+			messageBox->reload("Successfully installed", gameName, "", MessageBox::BT_OK, MessageBox::IT_ICONTRUE);
 			messageBox->messageOkClicked.connect(this, &InstallWindow::OnCloseWindow);
 		}
 		else
 		{
-			messageBox->reload("Succesfully installed", gameName, "Starting next installation in 6 second(s)", MessageBox::BT_CANCEL, MessageBox::IT_ICONTRUE);
+			messageBox->reload("Successfully installed", gameName, "Starting next installation in 6 second(s)", MessageBox::BT_CANCEL, MessageBox::IT_ICONTRUE);
 			messageBox->messageCancelClicked.connect(this, &InstallWindow::OnInstallProcessCancel);
 		}
 		
