@@ -178,48 +178,58 @@ int CFolderList::Get()
 {
 	Reset();
 	
-	DirList dir("fs:/vol/external01/install", NULL, DirList::Dirs);
+	ScanPath("fs:/vol/external01/install", false);
+	ScanPath("fs:/vol/external01/wudump", true);
 	
-	int cnt = dir.GetFilecount();
-	if(cnt > 0)
+	if(Folders.size() == 0)
 	{
-		int j = 0;
-		
-		for(int i = 0; i < cnt; i++)
-		{
-			std::string path = dir.GetFilepath(i);
-			path += "/title.tik";
-			
-			CFile * file = new CFile(path, CFile::ReadOnly);
-			
-			if(file->isOpen())
-			{
-				AddFolder();
-				Folders.at(j)->name = dir.GetFilename(i);
-				Folders.at(j)->path = dir.GetFilepath(i);
-				Folders.at(j)->selected = false;
-				Folders.at(j)->sequence = 0;
-				
-				j++;
-			}
-			
-			delete file;
-		}
-	}
-	else
-	{
+		DirList dir;
 		dir.LoadPath("fs:/vol/external01/install", ".tik", DirList::Files);
 		
-		cnt = dir.GetFilecount();
+		int cnt = dir.GetFilecount();
 		if(cnt > 0)
 		{
 			AddFolder();
-			Folders.at(0)->name = "install";
-			Folders.at(0)->path = "fs:/vol/external01/install";
-			Folders.at(0)->selected = false;
-			Folders.at(0)->sequence = 0;
+			FolderStruct * folder = Folders.back();
+			folder->name = "install";
+			folder->path = "fs:/vol/external01/install";
+			folder->selected = false;
+			folder->sequence = 0;
 		}
 	}
 	
 	return Folders.size();
+}
+
+void CFolderList::ScanPath(const std::string & rootPath, bool recursive, const std::string & prefix)
+{
+	DirList dir(rootPath, NULL, DirList::Dirs);
+	
+	int cnt = dir.GetFilecount();
+	for(int i = 0; i < cnt; i++)
+	{
+		std::string path = dir.GetFilepath(i);
+		std::string titleTikPath = path + "/title.tik";
+		
+		CFile * file = new CFile(titleTikPath, CFile::ReadOnly);
+		
+		if(file->isOpen())
+		{
+			AddFolder();
+			FolderStruct * folder = Folders.back();
+			if (prefix.empty())
+				folder->name = dir.GetFilename(i);
+			else
+				folder->name = prefix + ": " + dir.GetFilename(i);
+			folder->path = dir.GetFilepath(i);
+			folder->selected = false;
+			folder->sequence = 0;
+		}
+		else if(recursive)
+		{
+			ScanPath(path, false, dir.GetFilename(i));
+		}
+		
+		delete file;
+	}
 }
