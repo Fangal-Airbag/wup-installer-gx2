@@ -121,8 +121,8 @@ BrowserWindow::BrowserWindow(int w, int h, CFolderList * list)
     plusButton.setLabel(&plusTxt);
     plusButton.setImage(&selectImg);
 	plusButton.setIcon(&plusImg);
-    plusButton.setAlignment(ALIGN_MIDDLE | ALIGN_RIGHT);
-    plusButton.setPosition(240, 220);
+    plusButton.setAlignment(ALIGN_TOP | ALIGN_RIGHT);
+    plusButton.setPosition(240, -68);
     plusButton.clicked.connect(this, &BrowserWindow::OnPlusButtonClick);
     plusButton.setTrigger(&plusTrigger);
     plusButton.setTrigger(&touchTrigger);
@@ -140,8 +140,8 @@ BrowserWindow::BrowserWindow(int w, int h, CFolderList * list)
     minusButton.setLabel(&minusTxt);
     minusButton.setImage(&unselectImg);
 	minusButton.setIcon(&minusImg);
-    minusButton.setAlignment(ALIGN_MIDDLE | ALIGN_RIGHT);
-    minusButton.setPosition(240, 66);
+    minusButton.setAlignment(ALIGN_TOP | ALIGN_RIGHT);
+    minusButton.setPosition(240, -232);
     minusButton.clicked.connect(this, &BrowserWindow::OnMinusButtonClick);
     minusButton.setTrigger(&minusTrigger);
     minusButton.setTrigger(&touchTrigger);
@@ -156,8 +156,8 @@ BrowserWindow::BrowserWindow(int w, int h, CFolderList * list)
 	installTxt.setMaxWidth(unselectImg.getWidth()-5, GuiText::WRAP);
     installButton.setLabel(&installTxt);
     installButton.setImage(&installImg);
-	installButton.setAlignment(ALIGN_MIDDLE | ALIGN_RIGHT);
-    installButton.setPosition(240, -90);
+	installButton.setAlignment(ALIGN_TOP | ALIGN_RIGHT);
+	installButton.setPosition(240, -396);
     installButton.clicked.connect(this, &BrowserWindow::OnInstallButtonClick);
     installButton.setTrigger(&touchTrigger);
     installButton.setSoundClick(buttonClickSound);
@@ -174,8 +174,8 @@ BrowserWindow::BrowserWindow(int w, int h, CFolderList * list)
 	deleteTxt.setMaxWidth(unselectImg.getWidth()-5, GuiText::WRAP);
     deleteButton.setLabel(&deleteTxt);
     deleteButton.setImage(&unselectImg);
-	deleteButton.setAlignment(ALIGN_MIDDLE | ALIGN_RIGHT);
-    deleteButton.setPosition(240, -256);
+	deleteButton.setAlignment(ALIGN_TOP | ALIGN_RIGHT);
+    deleteButton.setPosition(240, -560);
     deleteButton.clicked.connect(this, &BrowserWindow::OnDeleteButtonClick);
     deleteButton.setTrigger(&touchTrigger);
     deleteButton.setSoundClick(buttonClickSound);
