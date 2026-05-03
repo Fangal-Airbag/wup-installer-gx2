@@ -34,9 +34,11 @@ BrowserWindow::BrowserWindow(int w, int h, CFolderList * list)
     , minusImageData(Resources::GetImageData("minus.png"))
 	, plusImg(plusImageData)
 	, minusImg(minusImageData)
-	, plusTxt("Select All", 42, glm::vec4(0.9f, 0.9f, 0.9f, 1.0f))
-	, minusTxt("Unselect All", 42, glm::vec4(0.9f, 0.9f, 0.9f, 1.0f))
+	, validImageData(Resources::GetImageData("validIcon.png"))
+	, validImg(validImageData)
+	, plusTxt("Select All", 42, glm::vec4(0.9f, 0.9f, 0.9f, 1.0f))	, minusTxt("Unselect All", 42, glm::vec4(0.9f, 0.9f, 0.9f, 1.0f))
 	, installTxt("Install", 42, glm::vec4(0.9f, 0.9f, 0.9f, 1.0f))
+	, deleteTxt("Del. after install", 32, glm::vec4(0.9f, 0.9f, 0.9f, 1.0f))
     , touchTrigger(GuiTrigger::CHANNEL_1, GuiTrigger::VPAD_TOUCH)
     , buttonATrigger(GuiTrigger::CHANNEL_ALL, GuiTrigger::BUTTON_A, true)
     , buttonUpTrigger(GuiTrigger::CHANNEL_ALL, GuiTrigger::BUTTON_UP | GuiTrigger::STICK_L_UP, true)
@@ -50,6 +52,7 @@ BrowserWindow::BrowserWindow(int w, int h, CFolderList * list)
 	, plusButton(selectImg.getWidth(), selectImg.getHeight())
 	, minusButton(selectImg.getWidth(), selectImg.getHeight())
 	, installButton(selectImg.getWidth(), selectImg.getHeight())
+	, deleteButton(selectImg.getWidth(), selectImg.getHeight())
 {
 	folderList = list;
 	pageIndex = 0;
@@ -118,8 +121,8 @@ BrowserWindow::BrowserWindow(int w, int h, CFolderList * list)
     plusButton.setLabel(&plusTxt);
     plusButton.setImage(&selectImg);
 	plusButton.setIcon(&plusImg);
-    plusButton.setAlignment(ALIGN_TOP | ALIGN_RIGHT);
-    plusButton.setPosition(240, -135);
+    plusButton.setAlignment(ALIGN_MIDDLE | ALIGN_RIGHT);
+    plusButton.setPosition(240, 220);
     plusButton.clicked.connect(this, &BrowserWindow::OnPlusButtonClick);
     plusButton.setTrigger(&plusTrigger);
     plusButton.setTrigger(&touchTrigger);
@@ -137,8 +140,8 @@ BrowserWindow::BrowserWindow(int w, int h, CFolderList * list)
     minusButton.setLabel(&minusTxt);
     minusButton.setImage(&unselectImg);
 	minusButton.setIcon(&minusImg);
-    minusButton.setAlignment(ALIGN_TOP | ALIGN_RIGHT);
-    minusButton.setPosition(240, -(selectImg.getWidth()+20) - 135);
+    minusButton.setAlignment(ALIGN_MIDDLE | ALIGN_RIGHT);
+    minusButton.setPosition(240, 66);
     minusButton.clicked.connect(this, &BrowserWindow::OnMinusButtonClick);
     minusButton.setTrigger(&minusTrigger);
     minusButton.setTrigger(&touchTrigger);
@@ -153,8 +156,8 @@ BrowserWindow::BrowserWindow(int w, int h, CFolderList * list)
 	installTxt.setMaxWidth(unselectImg.getWidth()-5, GuiText::WRAP);
     installButton.setLabel(&installTxt);
     installButton.setImage(&installImg);
-	installButton.setAlignment(ALIGN_TOP | ALIGN_RIGHT);
-    installButton.setPosition(240, -(selectImg.getWidth()+20)*2 - 135);
+	installButton.setAlignment(ALIGN_MIDDLE | ALIGN_RIGHT);
+    installButton.setPosition(240, -90);
     installButton.clicked.connect(this, &BrowserWindow::OnInstallButtonClick);
     installButton.setTrigger(&touchTrigger);
     installButton.setSoundClick(buttonClickSound);
@@ -164,6 +167,24 @@ BrowserWindow::BrowserWindow(int w, int h, CFolderList * list)
 	installButton.setImageSelectOver(installButtonSelectedImage);
     this->append(&installButton);
 	rightSideButtons.push_back(&installButton);
+
+	validImg.setAlignment(ALIGN_BOTTOM | ALIGN_RIGHT);
+	validImg.setPosition(-10, 10);
+	validImg.setScale(0.6f);
+	deleteTxt.setMaxWidth(unselectImg.getWidth()-5, GuiText::WRAP);
+    deleteButton.setLabel(&deleteTxt);
+    deleteButton.setImage(&unselectImg);
+	deleteButton.setAlignment(ALIGN_MIDDLE | ALIGN_RIGHT);
+    deleteButton.setPosition(240, -256);
+    deleteButton.clicked.connect(this, &BrowserWindow::OnDeleteButtonClick);
+    deleteButton.setTrigger(&touchTrigger);
+    deleteButton.setSoundClick(buttonClickSound);
+    deleteButton.setEffectGrow();
+	deleteButton.setSelectable(true);
+	deleteButtonSelectedImage = new GuiImage(selectSelectedImageData);
+	deleteButton.setImageSelectOver(deleteButtonSelectedImage);
+    this->append(&deleteButton);
+	rightSideButtons.push_back(&deleteButton);
 }
 
 BrowserWindow::~BrowserWindow()
@@ -183,6 +204,8 @@ BrowserWindow::~BrowserWindow()
 	delete plusButtonSelectedImage;
 	delete minusButtonSelectedImage;
 	delete installButtonSelectedImage;
+	delete deleteButtonSelectedImage;
+	Resources::RemoveImageData(validImageData);
 
     Resources::RemoveImageData(buttonImageData);
     Resources::RemoveImageData(buttonCheckedImageData);
@@ -209,7 +232,7 @@ int BrowserWindow::SearchSelectedButton()
 int BrowserWindow::SearchSelectedRightSideButton()
 {
 	int index = -1;
-	for(int i = 0; i < 3 && index < 0; i++)
+	for(int i = 0; i < 4 && index < 0; i++)
 	{
 		if(rightSideButtons[i]->getState() == STATE_SELECTED)
 			index = i;
@@ -312,7 +335,7 @@ void BrowserWindow::OnDPADClick(GuiButton *button, const GuiController *controll
 			index--;
 			rightSideButtons[index]->setState(STATE_SELECTED);
 		}
-		else if(trigger == &buttonDownTrigger && index < 2)
+		else if(trigger == &buttonDownTrigger && index < 3)
 		{
 			if(index >= 0)
 				rightSideButtons[index]->clearState(STATE_SELECTED);
@@ -385,6 +408,15 @@ void BrowserWindow::OnMinusButtonClick(GuiButton *button, const GuiController *c
 void BrowserWindow::OnInstallButtonClick(GuiButton *button, const GuiController *controller, GuiTrigger *trigger)
 {
 	installButtonClicked(this);
+}
+
+void BrowserWindow::OnDeleteButtonClick(GuiButton *button, const GuiController *controller, GuiTrigger *trigger)
+{
+	deleteAfterInstall = !deleteAfterInstall;
+	if(deleteAfterInstall)
+		button->setIcon(&validImg);
+	else
+		button->setIcon(NULL);
 }
 
 void BrowserWindow::OnScrollbarListChange(int selItem, int selIndex)

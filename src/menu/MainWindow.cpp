@@ -263,7 +263,7 @@ void MainWindow::OnInstallButtonClicked(GuiElement *element)
 	browserWindow->setState(GuiElement::STATE_DISABLED);
 	browserWindow->effectFinished.connect(this, &MainWindow::OnBrowserCloseEffectFinish);
 	
-	installWindow = new InstallWindow(folderList);
+	installWindow = new InstallWindow(folderList, browserWindow->DeleteAfterInstallEnabled());
 	installWindow->installWindowClosed.connect(this, &MainWindow::OnInstallWindowClosed);
 }
 
@@ -275,6 +275,8 @@ void MainWindow::OnBrowserCloseEffectFinish(GuiElement *element)
 }
 void MainWindow::OnInstallWindowClosed(GuiElement *element)
 {
+	if(folderList)
+		folderList->Get();
 	SetBrowserWindow();
 	currentDrcFrame->bringToFront(&headerFrame);
 }

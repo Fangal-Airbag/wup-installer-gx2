@@ -20,6 +20,7 @@
 #include "utils/StringTools.h"
 #include "common/common.h"
 #include "system/power.h"
+#include "fs/fs_utils.h"
 #include <coreinit/mcp.h>
 #include <coreinit/memory.h>
 #include <coreinit/ios.h>
@@ -39,10 +40,11 @@ static void* IosInstallCallback(IOSError errorCode, void * priv_data)
 	return 0;
 }
 
-InstallWindow::InstallWindow(CFolderList * list)
+InstallWindow::InstallWindow(CFolderList * list, bool deleteAfterInstall)
 	: GuiFrame(0, 0)
 	, CThread(CThread::eAttributeAffCore0 | CThread::eAttributePinnedAff)
 	, folderList(list)
+	, deleteAfterInstall(deleteAfterInstall)
 {   
 	mainWindow = Application::instance()->getMainWindow();
 	
@@ -336,6 +338,11 @@ void InstallWindow::InstallProcess(int pos, int total)
 	
 	if(result >= 0)
 	{
+		if(deleteAfterInstall)
+		{
+			RemoveDirectory(folderList->GetPath(index).c_str());
+		}
+
 		if(pos == total)
 		{
 			messageBox->reload("Successfully installed", gameName, "", MessageBox::BT_OK, MessageBox::IT_ICONTRUE);
