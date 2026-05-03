@@ -19,6 +19,7 @@
 #include "InstallWindow.h"
 #include "utils/StringTools.h"
 #include "common/common.h"
+#include "common/fs_defs.h"
 #include "system/power.h"
 #include "fs/fs_utils.h"
 #include <coreinit/mcp.h>
@@ -340,7 +341,14 @@ void InstallWindow::InstallProcess(int pos, int total)
 	{
 		if(deleteAfterInstall)
 		{
-			RemoveDirectory(folderList->GetPath(index).c_str());
+			std::string path = folderList->GetPath(index);
+			const char * stopAt = NULL;
+			if (path.find(SD_INSTALL_PATH) == 0)
+				stopAt = SD_INSTALL_PATH;
+			else if (path.find(SD_WUDUMP_PATH) == 0)
+				stopAt = SD_WUDUMP_PATH;
+
+			RemoveDirectoryAndEmptyParents(path.c_str(), stopAt);
 		}
 
 		if(pos == total)

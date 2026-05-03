@@ -28,6 +28,7 @@
 #include "CFolderList.hpp"
 #include "DirList.h"
 #include "CFile.hpp"
+#include "common/fs_defs.h"
 #include <coreinit/internal.h>
 
 void CFolderList::AddFolder()
@@ -178,13 +179,13 @@ int CFolderList::Get()
 {
 	Reset();
 	
-	ScanPath("fs:/vol/external01/install", false);
-	ScanPath("fs:/vol/external01/wudump", true);
+	ScanPath(SD_INSTALL_PATH, false);
+	ScanPath(SD_WUDUMP_PATH, true);
 	
 	if(Folders.size() == 0)
 	{
 		DirList dir;
-		dir.LoadPath("fs:/vol/external01/install", ".tik", DirList::Files);
+		dir.LoadPath(SD_INSTALL_PATH, ".tik", DirList::Files);
 		
 		int cnt = dir.GetFilecount();
 		if(cnt > 0)
@@ -192,7 +193,7 @@ int CFolderList::Get()
 			AddFolder();
 			FolderStruct * folder = Folders.back();
 			folder->name = "install";
-			folder->path = "fs:/vol/external01/install";
+			folder->path = SD_INSTALL_PATH;
 			folder->selected = false;
 			folder->sequence = 0;
 		}

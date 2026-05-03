@@ -230,3 +230,53 @@ int RemoveDirectory(const char *path)
 
 	return r;
 }
+
+int IsDirectoryEmpty(const char *path)
+{
+	DIR *d = opendir(path);
+	if (!d) return 0;
+
+	struct dirent *p;
+	int empty = 1;
+	while ((p = readdir(d)))
+	{
+		if (!strcmp(p->d_name, ".") || !strcmp(p->d_name, ".."))
+			continue;
+		empty = 0;
+		break;
+	}
+	closedir(d);
+	return empty;
+}
+
+void RemoveDirectoryAndEmptyParents(const char *path, const char *stopAt)
+{
+	if (RemoveDirectory(path) != 0)
+		return;
+
+	char parent[512];
+	strncpy(parent, path, sizeof(parent));
+	parent[sizeof(parent)-1] = '\0';
+
+	while (1)
+	{
+		char *slash = strrchr(parent, '/');
+		if (!slash) break;
+		*slash = '\0';
+
+		// Stop if we reached the limit or a root mount point
+		if ((stopAt && strcmp(parent, stopAt) == 0) ||
+			strlen(parent) < 20)
+			break;
+
+		if (IsDirectoryEmpty(parent))
+		{
+			if (rmdir(parent) != 0)
+				break;
+		}
+		else
+		{
+			break;
+		}
+	}
+}
