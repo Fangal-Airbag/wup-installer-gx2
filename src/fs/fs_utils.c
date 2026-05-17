@@ -6,6 +6,7 @@
 #include <fcntl.h>
 #include <dirent.h>
 #include <sys/stat.h>
+#include <errno.h>
 #include <coreinit/filesystem.h>
 
 #define FS_MAX_MOUNTPATH_SIZE           128
@@ -194,6 +195,7 @@ int RemoveDirectory(const char *path)
 	{
 		struct dirent *p;
 		r = 0;
+		errno = 0;
 		while (!r && (p = readdir(d)))
 		{
 			int r2 = -1;
@@ -214,14 +216,20 @@ int RemoveDirectory(const char *path)
 				if (!stat(buf, &statbuf))
 				{
 					if (S_ISDIR(statbuf.st_mode))
-						r2 = RemoveDirectory(buf);
+						// We don't expect subdirectories in install folders. Let it fail if not empty.
+						r2 = rmdir(buf);
 					else
 						r2 = unlink(buf);
 				}
 				free(buf);
 			}
 			r = r2;
+			errno = 0;
 		}
+
+		if (errno != 0)
+			r = -1;
+
 		closedir(d);
 	}
 
@@ -229,24 +237,6 @@ int RemoveDirectory(const char *path)
 		r = rmdir(path);
 
 	return r;
-}
-
-int IsDirectoryEmpty(const char *path)
-{
-	DIR *d = opendir(path);
-	if (!d) return 0;
-
-	struct dirent *p;
-	int empty = 1;
-	while ((p = readdir(d)))
-	{
-		if (!strcmp(p->d_name, ".") || !strcmp(p->d_name, ".."))
-			continue;
-		empty = 0;
-		break;
-	}
-	closedir(d);
-	return empty;
 }
 
 void RemoveDirectoryAndEmptyParents(const char *path, const char *stopAt)
@@ -269,14 +259,8 @@ void RemoveDirectoryAndEmptyParents(const char *path, const char *stopAt)
 			strlen(parent) < 20)
 			break;
 
-		if (IsDirectoryEmpty(parent))
-		{
-			if (rmdir(parent) != 0)
-				break;
-		}
-		else
-		{
+		// rmdir will intentionally fail and return non-zero if the directory is not empty
+		if (rmdir(parent) != 0)
 			break;
-		}
 	}
 }

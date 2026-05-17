@@ -26,6 +26,7 @@ class BrowserWindow : public GuiFrame, public sigslot::has_slots<>
 public:
     BrowserWindow(int w, int h, CFolderList * folderList);
     virtual ~BrowserWindow();
+	bool DeleteAfterInstallEnabled() { return deleteAfterInstall; }
 	
 	sigslot::signal1<GuiElement *> installButtonClicked;
 	
@@ -116,8 +117,6 @@ private:
 	
 	CFolderList * folderList;
 
-public:
-	bool DeleteAfterInstallEnabled() { return deleteAfterInstall; }
 };
 
 #endif //_BROSERWINDOW_H_

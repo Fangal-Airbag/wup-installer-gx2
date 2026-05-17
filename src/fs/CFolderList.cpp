@@ -31,11 +31,11 @@
 #include "common/fs_defs.h"
 #include <coreinit/internal.h>
 
-void CFolderList::AddFolder()
+void CFolderList::AddFolder(const std::string& name, const std::string& path)
 {
 	FolderStruct * newFolder = new FolderStruct;
-	newFolder->name = "";
-	newFolder->path = "";
+	newFolder->name = name;
+	newFolder->path = path;
 	newFolder->selected = false;
 	newFolder->sequence = 0;
 	
@@ -190,12 +190,7 @@ int CFolderList::Get()
 		int cnt = dir.GetFilecount();
 		if(cnt > 0)
 		{
-			AddFolder();
-			FolderStruct * folder = Folders.back();
-			folder->name = "install";
-			folder->path = SD_INSTALL_PATH;
-			folder->selected = false;
-			folder->sequence = 0;
+			AddFolder("install", SD_INSTALL_PATH);
 		}
 	}
 	
@@ -212,25 +207,16 @@ void CFolderList::ScanPath(const std::string & rootPath, bool recursive, const s
 		std::string path = dir.GetFilepath(i);
 		std::string titleTikPath = path + "/title.tik";
 		
-		CFile * file = new CFile(titleTikPath, CFile::ReadOnly);
+		CFile file(titleTikPath, CFile::ReadOnly);
 		
-		if(file->isOpen())
+		if(file.isOpen())
 		{
-			AddFolder();
-			FolderStruct * folder = Folders.back();
-			if (prefix.empty())
-				folder->name = dir.GetFilename(i);
-			else
-				folder->name = prefix + ": " + dir.GetFilename(i);
-			folder->path = dir.GetFilepath(i);
-			folder->selected = false;
-			folder->sequence = 0;
+			std::string name = prefix.empty() ? dir.GetFilename(i) : prefix + ": " + dir.GetFilename(i);
+			AddFolder(name, dir.GetFilepath(i));
 		}
 		else if(recursive)
 		{
 			ScanPath(path, false, dir.GetFilename(i));
 		}
-		
-		delete file;
 	}
 }

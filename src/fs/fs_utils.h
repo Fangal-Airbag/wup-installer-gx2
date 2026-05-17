@@ -16,7 +16,6 @@ int LoadFileToMem(const char *filepath, u8 **inbuffer, u32 *size);
 int CreateSubfolder(const char * fullpath);
 int CheckFile(const char * filepath);
 int RemoveDirectory(const char *path);
-int IsDirectoryEmpty(const char *path);
 void RemoveDirectoryAndEmptyParents(const char *path, const char *stopAt);
 
 #ifdef __cplusplus
