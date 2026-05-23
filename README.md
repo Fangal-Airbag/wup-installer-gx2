@@ -14,8 +14,8 @@ Once the dependencies are installed just run `make` and use the resulting `.wuhb
 ### Dockerfile
 To build this application using docker, run the following commands:
 ```shell
-docker build . -t wupgx2
-docker run -it --rm -v ${PWD}:/app wupgx2
+docker buildx build . -t wupgx2 --load
+docker run -it --rm -v "$PWD":/app wupgx2
 ```
 
 You can then use the resulting `.wuhb` file.
