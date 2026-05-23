@@ -62,6 +62,7 @@ private:
     GuiImageData *minusImageData;
     GuiImage plusImg;
     GuiImage minusImg;
+    GuiImage deleteImg;
 	
 	GuiText plusTxt;
 	GuiText minusTxt;

@@ -34,6 +34,7 @@ BrowserWindow::BrowserWindow(int w, int h, CFolderList * list)
     , minusImageData(Resources::GetImageData("minus.png"))
 	, plusImg(plusImageData)
 	, minusImg(minusImageData)
+	, deleteImg(selectImageData)
 	, validImageData(Resources::GetImageData("validIcon.png"))
 	, validImg(validImageData)
 	, plusTxt("Select All", 42, glm::vec4(0.9f, 0.9f, 0.9f, 1.0f))	, minusTxt("Unselect All", 42, glm::vec4(0.9f, 0.9f, 0.9f, 1.0f))
@@ -153,7 +154,7 @@ BrowserWindow::BrowserWindow(int w, int h, CFolderList * list)
     this->append(&minusButton);
 	rightSideButtons.push_back(&minusButton);
 	
-	installTxt.setMaxWidth(unselectImg.getWidth()-5, GuiText::WRAP);
+	installTxt.setMaxWidth(installImg.getWidth()-5, GuiText::WRAP);
     installButton.setLabel(&installTxt);
     installButton.setImage(&installImg);
 	installButton.setAlignment(ALIGN_TOP | ALIGN_RIGHT);
@@ -171,9 +172,9 @@ BrowserWindow::BrowserWindow(int w, int h, CFolderList * list)
 	validImg.setAlignment(ALIGN_BOTTOM | ALIGN_RIGHT);
 	validImg.setPosition(-10, 10);
 	validImg.setScale(0.6f);
-	deleteTxt.setMaxWidth(unselectImg.getWidth()-5, GuiText::WRAP);
+	deleteTxt.setMaxWidth(deleteImg.getWidth()-5, GuiText::WRAP);
     deleteButton.setLabel(&deleteTxt);
-    deleteButton.setImage(&unselectImg);
+    deleteButton.setImage(&deleteImg);
 	deleteButton.setAlignment(ALIGN_TOP | ALIGN_RIGHT);
     deleteButton.setPosition(240, -560);
     deleteButton.clicked.connect(this, &BrowserWindow::OnDeleteButtonClick);
