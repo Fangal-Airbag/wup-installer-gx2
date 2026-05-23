@@ -6,7 +6,7 @@ This a WUHB port of WUP Installer GX2 which can be found [here](https://sourcefo
 ### Makefile
 To build this application using make, you will need [wut](https://github.com/devkitPro/wut) and the following devkitPro packages:
 `
-ppc-zlib ppc-libmad ppc-libogg ppc-libgd ppc-freetype ppc-libjpeg-turbo ppc-libpng ppc-libvorbisidec ppc-glm ppc-bzip2
+ppc-zlib ppc-libmad ppc-libogg ppc-libgd ppc-freetype ppc-brotli ppc-libjpeg-turbo ppc-libpng ppc-libvorbisidec ppc-glm ppc-bzip2
 `
 
 Once the dependencies are installed just run `make` and use the resulting `.wuhb` file.
