@@ -27,5 +27,5 @@ and [Gary](https://github.com/GaryOderNichts) for making the Wii U controller mo
 Also to [Yardape8000](https://github.com/Yardape8000) for creating the wup installer y mod which WUP Installer GX2 was based on. [His repo](https://github.com/Yardape8000/wupinstaller).
 
 And of course [dimok](https://github.com/dimok789) who created the original apps HBL and Loadiine which use the same base, 
-as well as the original wupinstaller, and [Maschell](https://github.com/Maschell) for creating the new Aroma environment 
-and all the other amazing work he's done for the community. Big thanks to them as well. 
+as well as the original wupinstaller. Finally, a big thanks to [Maschell](https://github.com/Maschell) for creating the Aroma environment 
+and all the other amazing work he's done for the community.
