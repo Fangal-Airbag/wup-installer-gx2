@@ -28,13 +28,14 @@
 #include "CFolderList.hpp"
 #include "DirList.h"
 #include "CFile.hpp"
+#include "common/fs_defs.h"
 #include <coreinit/internal.h>
 
-void CFolderList::AddFolder()
+void CFolderList::AddFolder(const std::string& name, const std::string& path)
 {
 	FolderStruct * newFolder = new FolderStruct;
-	newFolder->name = "";
-	newFolder->path = "";
+	newFolder->name = name;
+	newFolder->path = path;
 	newFolder->selected = false;
 	newFolder->sequence = 0;
 	
@@ -178,48 +179,44 @@ int CFolderList::Get()
 {
 	Reset();
 	
-	DirList dir("fs:/vol/external01/install", NULL, DirList::Dirs);
+	ScanPath(SD_INSTALL_PATH, false);
+	ScanPath(SD_WUDUMP_PATH, true);
 	
-	int cnt = dir.GetFilecount();
-	if(cnt > 0)
+	if(Folders.size() == 0)
 	{
-		int j = 0;
+		DirList dir;
+		dir.LoadPath(SD_INSTALL_PATH, ".tik", DirList::Files);
 		
-		for(int i = 0; i < cnt; i++)
-		{
-			std::string path = dir.GetFilepath(i);
-			path += "/title.tik";
-			
-			CFile * file = new CFile(path, CFile::ReadOnly);
-			
-			if(file->isOpen())
-			{
-				AddFolder();
-				Folders.at(j)->name = dir.GetFilename(i);
-				Folders.at(j)->path = dir.GetFilepath(i);
-				Folders.at(j)->selected = false;
-				Folders.at(j)->sequence = 0;
-				
-				j++;
-			}
-			
-			delete file;
-		}
-	}
-	else
-	{
-		dir.LoadPath("fs:/vol/external01/install", ".tik", DirList::Files);
-		
-		cnt = dir.GetFilecount();
+		int cnt = dir.GetFilecount();
 		if(cnt > 0)
 		{
-			AddFolder();
-			Folders.at(0)->name = "install";
-			Folders.at(0)->path = "fs:/vol/external01/install";
-			Folders.at(0)->selected = false;
-			Folders.at(0)->sequence = 0;
+			AddFolder("install", SD_INSTALL_PATH);
 		}
 	}
 	
 	return Folders.size();
+}
+
+void CFolderList::ScanPath(const std::string & rootPath, bool recursive, const std::string & prefix)
+{
+	DirList dir(rootPath, NULL, DirList::Dirs);
+	
+	int cnt = dir.GetFilecount();
+	for(int i = 0; i < cnt; i++)
+	{
+		std::string path = dir.GetFilepath(i);
+		std::string titleTikPath = path + "/title.tik";
+		
+		CFile file(titleTikPath, CFile::ReadOnly);
+		
+		if(file.isOpen())
+		{
+			std::string name = prefix.empty() ? dir.GetFilename(i) : prefix + ": " + dir.GetFilename(i);
+			AddFolder(name, dir.GetFilepath(i));
+		}
+		else if(recursive)
+		{
+			ScanPath(path, false, dir.GetFilename(i));
+		}
+	}
 }

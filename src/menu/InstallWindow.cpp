@@ -19,7 +19,9 @@
 #include "InstallWindow.h"
 #include "utils/StringTools.h"
 #include "common/common.h"
+#include "common/fs_defs.h"
 #include "system/power.h"
+#include "fs/fs_utils.h"
 #include <coreinit/mcp.h>
 #include <coreinit/memory.h>
 #include <coreinit/ios.h>
@@ -39,10 +41,11 @@ static void* IosInstallCallback(IOSError errorCode, void * priv_data)
 	return 0;
 }
 
-InstallWindow::InstallWindow(CFolderList * list)
+InstallWindow::InstallWindow(CFolderList * list, bool deleteAfterInstall)
 	: GuiFrame(0, 0)
 	, CThread(CThread::eAttributeAffCore0 | CThread::eAttributePinnedAff)
 	, folderList(list)
+	, deleteAfterInstall(deleteAfterInstall)
 {   
 	mainWindow = Application::instance()->getMainWindow();
 	
@@ -336,6 +339,18 @@ void InstallWindow::InstallProcess(int pos, int total)
 	
 	if(result >= 0)
 	{
+		if(deleteAfterInstall)
+		{
+			std::string path = folderList->GetPath(index);
+			const char * stopAt = NULL;
+			if (path.find(SD_INSTALL_PATH) == 0)
+				stopAt = SD_INSTALL_PATH;
+			else if (path.find(SD_WUDUMP_PATH) == 0)
+				stopAt = SD_WUDUMP_PATH;
+
+			RemoveDirectoryAndEmptyParents(path.c_str(), stopAt);
+		}
+
 		if(pos == total)
 		{
 			messageBox->reload("Successfully installed", gameName, "", MessageBox::BT_OK, MessageBox::IT_ICONTRUE);

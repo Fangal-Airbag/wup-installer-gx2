@@ -15,6 +15,8 @@ int LoadFileToMem(const char *filepath, u8 **inbuffer, u32 *size);
 //! todo: C++ class
 int CreateSubfolder(const char * fullpath);
 int CheckFile(const char * filepath);
+int RemoveDirectory(const char *path);
+void RemoveDirectoryAndEmptyParents(const char *path, const char *stopAt);
 
 #ifdef __cplusplus
 }

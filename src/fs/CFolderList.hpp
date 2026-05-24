@@ -40,7 +40,7 @@ class CFolderList
 		
 		int Get();
 		void Reset();
-		void AddFolder();
+		void AddFolder(const std::string& name, const std::string& path);
 		int GetCount() { return Folders.size(); };
 		int GetSelectedCount();
 		std::string GetName(int ind);
@@ -55,6 +55,7 @@ class CFolderList
 		void Click(int ind);
 		
 	protected:
+		void ScanPath(const std::string & rootPath, bool recursive, const std::string & prefix = "");
 		void AddSequence(int index);
 		void RemoveSequence(int index);
 		

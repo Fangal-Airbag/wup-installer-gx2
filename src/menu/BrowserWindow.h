@@ -26,6 +26,7 @@ class BrowserWindow : public GuiFrame, public sigslot::has_slots<>
 public:
     BrowserWindow(int w, int h, CFolderList * folderList);
     virtual ~BrowserWindow();
+	bool DeleteAfterInstallEnabled() { return deleteAfterInstall; }
 	
 	sigslot::signal1<GuiElement *> installButtonClicked;
 	
@@ -39,6 +40,7 @@ private:
 	void OnPlusButtonClick(GuiButton *button, const GuiController *controller, GuiTrigger *trigger);
 	void OnMinusButtonClick(GuiButton *button, const GuiController *controller, GuiTrigger *trigger);
 	void OnInstallButtonClick(GuiButton *button, const GuiController *controller, GuiTrigger *trigger);
+	void OnDeleteButtonClick(GuiButton *button, const GuiController *controller, GuiTrigger *trigger);
 	
 	void OnScrollbarListChange(int selectItem, int pageIndex);
 	
@@ -60,10 +62,12 @@ private:
     GuiImageData *minusImageData;
     GuiImage plusImg;
     GuiImage minusImg;
+    GuiImage deleteImg;
 	
 	GuiText plusTxt;
 	GuiText minusTxt;
 	GuiText installTxt;
+	GuiText deleteTxt;
     
 	GuiTrigger touchTrigger;
     GuiTrigger buttonATrigger;
@@ -82,16 +86,22 @@ private:
 	GuiButton plusButton;
 	GuiButton minusButton;
 	GuiButton installButton;
+	GuiButton deleteButton;
 	
     GuiImage* plusButtonSelectedImage;
     GuiImage* minusButtonSelectedImage;
     GuiImage* installButtonSelectedImage;
+    GuiImage* deleteButtonSelectedImage;
+
+    GuiImageData *validImageData;
+    GuiImage validImg;
 
     int pageIndex;
 	int selectedItem;
 	int buttonCount;
 	
     bool rightSide = false;
+	bool deleteAfterInstall = false;
     std::vector<GuiButton*> rightSideButtons;
 
     typedef struct
@@ -107,6 +117,7 @@ private:
     std::vector<FolderButton> folderButtons;
 	
 	CFolderList * folderList;
+
 };
 
 #endif //_BROSERWINDOW_H_

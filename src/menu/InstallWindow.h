@@ -10,7 +10,7 @@ class MainWindow;
 class InstallWindow : public GuiFrame, public CThread, public sigslot::has_slots<>
 {
 public:
-	InstallWindow(CFolderList * list);
+	InstallWindow(CFolderList * list, bool deleteAfterInstall = false);
 	~InstallWindow();
 	
 	void startInstalling()
@@ -43,6 +43,7 @@ private:
 	
 	int folderCount;
 	bool canceled;
+	bool deleteAfterInstall;
 	int target;
 	
 	enum
